@@ -1,0 +1,78 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: learnflow-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ../backend:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - learnflow
+    depends_on:
+      - db
+      - redis
+
+  web:
+    image: nginx:alpine
+    container_name: learnflow-web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ../backend:/var/www
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - learnflow
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: learnflow-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: learnflow
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_PASSWORD: secret
+      MYSQL_USER: learnflow
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - learnflow
+
+  redis:
+    image: redis:alpine
+    container_name: learnflow-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - learnflow
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: learnflow-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    networks:
+      - learnflow
+
+networks:
+  learnflow:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
