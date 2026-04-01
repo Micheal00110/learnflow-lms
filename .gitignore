@@ -1,0 +1,10 @@
+node_modules/
+vendor/
+.env
+dist/
+storage/
+bootstrap/cache/
+*.log
+.DS_Store
+*.sqlite
+/tmp/
