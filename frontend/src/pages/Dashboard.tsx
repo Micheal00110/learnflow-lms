@@ -29,40 +29,43 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container-app py-8">
+    <div className="min-h-screen">
+      {/* Welcome Header */}
+      <section className="section-header bg-white border-b border-gray-200">
+        <div className="container-app">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">Welcome back, {user?.first_name}!</h1>
-            <p className="text-gray-500">Continue where you left off</p>
+            <h1 className="section-title">Welcome back, {user?.first_name}!</h1>
+            <p className="section-subtitle">Continue where you left off</p>
           </motion.div>
         </div>
-      </div>
+      </section>
 
-      {/* Main Content */}
-      <div className="container-app py-8">
+      <div className="container-app">
         {loading ? (
           <PageLoader />
         ) : (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-            {/* Actions */}
+          <>
+            {/* Instructor Actions */}
             {user?.role === 'instructor' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-                <Link to="/instructor/create-course" className="card card-no-hover p-6 bg-gradient-to-r from-primary-50 to-purple-50 border-primary-100 flex items-center justify-between group">
-                  <div>
-                    <h3 className="font-semibold text-gray-800 text-lg">Want to create a course?</h3>
-                    <p className="text-sm text-gray-500 mt-1">Share your expertise with thousands of learners</p>
-                  </div>
-                  <span className="btn-primary ml-4 whitespace-nowrap">Create Course →</span>
-                </Link>
-              </motion.div>
+              <section className="section">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+                  <Link to="/instructor/create-course" className="card card-no-hover p-6 bg-gradient-to-r from-primary-50 to-purple-50 border-primary-100 flex items-center justify-between group">
+                    <div>
+                      <h3 className="font-semibold text-gray-800 text-lg mb-1">Want to create a course?</h3>
+                      <p className="text-sm text-gray-500">Share your expertise with thousands of learners</p>
+                    </div>
+                    <span className="btn-primary whitespace-nowrap">Create Course →</span>
+                  </Link>
+                </motion.div>
+              </section>
             )}
 
-            {/* Stats Grid */}
-            <div>
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Your Progress</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Progress Stats */}
+            <section className="section">
+              <div className="section-header">
+                <h2 className="section-title">Your Progress</h2>
+              </div>
+              <div className="content-grid grid-cols-2 lg:grid-cols-4">
                 {statCards.map((stat, i) => (
                   <motion.div
                     key={stat.label}
@@ -87,10 +90,87 @@ export default function Dashboard() {
                   </motion.div>
                 ))}
               </div>
-            </div>
+            </section>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200" />
+            {/* Continue Learning */}
+            <section className="section">
+              <div className="section-header flex items-center justify-between">
+                <div>
+                  <h2 className="section-title">Continue Learning</h2>
+                  <p className="section-subtitle">Resume your courses and keep progressing</p>
+                </div>
+                {enrollments.length > 0 && (
+                  <Link to="/my-courses" className="btn-ghost text-sm hidden sm:inline-flex">
+                    View All →
+                  </Link>
+                )}
+              </div>
+
+              {enrollments.length === 0 ? (
+                <div className="text-center py-12">
+                  <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-6" />
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">No courses yet</h3>
+                  <p className="text-gray-500 mb-8 max-w-md mx-auto">You haven't enrolled in any courses. Explore our catalog to get started!</p>
+                  <Link to="/courses" className="btn-primary">
+                    Browse Courses
+                  </Link>
+                </div>
+              ) : (
+                <div className="content-grid grid md:grid-cols-2 lg:grid-cols-3">
+                  {enrollments.slice(0, 6).map((e: any, i: number) => (
+                    <motion.div
+                      key={e.id}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 * i }}
+                    >
+                      <Link to={`/learning/${e.course?.id}`} className="card block overflow-hidden group h-full">
+                        <div className="relative overflow-hidden h-48 bg-gray-100">
+                          <img
+                            src={e.course?.thumbnail_url || `https://picsum.photos/seed/${e.course?.id}/400/240`}
+                            alt={e.course?.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                            <span className="text-white text-sm font-semibold">Resume</span>
+                          </div>
+                        </div>
+                        <div className="p-6">
+                          <h3 className="font-semibold text-gray-800 mb-3 line-clamp-2 group-hover:text-primary-600 transition-colors text-base">
+                            {e.course?.title}
+                          </h3>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-gray-500 font-medium">Progress</span>
+                            <span className="text-xs text-gray-700 font-semibold">{e.progress_percentage || 0}%</span>
+                          </div>
+                          <div className="clay-progress-track h-2 mt-2">
+                            <div className="clay-progress-fill h-2" style={{ width: `${e.progress_percentage || 0}%` }} />
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                  {enrollments.length > 6 && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }} 
+                      animate={{ opacity: 1, scale: 1 }} 
+                      className="col-span-full flex justify-center mt-8"
+                    >
+                      <Link to="/my-courses" className="btn-primary">
+                        View All Courses
+                      </Link>
+                    </motion.div>
+                  )}
+                </div>
+              )}
+            </section>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 
             {/* Continue Learning */}
             <div>
