@@ -59,51 +59,58 @@ export default function Courses() {
   const hasFilters = searchParams.toString().length > 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="container-app py-8 md:py-10">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Explore Courses</h1>
-          <p className="text-gray-500">Discover courses taught by industry experts</p>
-        </motion.div>
-      </div>
+    <>
+      {/* Page Header */}
+      <section className="section-header">
+        <div className="container-app">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="section-title">Explore Courses</h1>
+            <p className="section-subtitle">Discover courses taught by industry experts</p>
+          </motion.div>
+        </div>
+      </section>
 
-      {/* Main Content */}
-      <div className="container-app pb-12">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Filters */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:w-64 flex-shrink-0"
-          >
-            <form onSubmit={handleSearch} className="card card-no-hover p-5 sticky top-20">
-              <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <Filter className="w-4 h-4" /> Filters
-              </h3>
+      {/* Filters + Courses Section */}
+      <section className="section">
+        <div className="container-app">
+          <div className="flex flex-col lg:flex-row gap-8 lg:items-start">
+            {/* Sidebar Filters */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="lg:w-72 flex-shrink-0 order-2 lg:order-1 lg:self-start mb-8 lg:mb-0"
+            >
+            <form onSubmit={handleSearch} className="card card-no-hover p-6 lg:sticky lg:top-24">
+              <div className="section-header mb-6">
+                <h3 className="section-title flex items-center gap-2">
+                  <Filter className="w-5 h-5 shrink-0" aria-hidden="true" /> Filters
+                </h3>
+              </div>
 
               {/* Search */}
-              <div className="mb-5">
-                <label className="label">Search</label>
+              <div className="mb-6">
+                <label className="label sr-only">Search courses</label>
                 <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true" />
                   <input
-                    type="text"
-                    placeholder="Course name..."
+                    type="search"
+                    placeholder="Search courses..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="input pl-9 text-sm"
+                    className="input pl-10 w-full text-sm"
+                    aria-label="Search courses"
                   />
                 </div>
               </div>
 
               {/* Category */}
-              <div className="mb-5">
+              <div className="mb-6">
                 <label className="label">Category</label>
                 <select
                   value={searchParams.get('category') || ''}
                   onChange={(e) => setFilter('category', e.target.value)}
-                  className="input text-sm"
+                  className="input w-full text-sm"
+                  aria-label="Filter by category"
                 >
                   <option value="">All Categories</option>
                   <option value="Development">Development</option>
@@ -114,12 +121,13 @@ export default function Courses() {
               </div>
 
               {/* Level */}
-              <div className="mb-6">
+              <div className="mb-8">
                 <label className="label">Level</label>
                 <select
                   value={searchParams.get('level') || ''}
                   onChange={(e) => setFilter('level', e.target.value)}
-                  className="input text-sm"
+                  className="input w-full text-sm"
+                  aria-label="Filter by level"
                 >
                   <option value="">All Levels</option>
                   <option value="beginner">Beginner</option>
@@ -129,12 +137,12 @@ export default function Courses() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2">
-                <button type="submit" className="btn-primary flex-1 text-sm">
+              <div className="flex gap-3">
+                <button type="submit" className="btn-primary flex-1 text-sm font-medium" aria-label="Apply search filters">
                   Search
                 </button>
                 {hasFilters && (
-                  <button type="button" onClick={clearFilters} className="btn-ghost flex-1 text-sm">
+                  <button type="button" onClick={clearFilters} className="btn-ghost flex-1 text-sm font-medium" aria-label="Clear all filters">
                     Clear
                   </button>
                 )}
@@ -161,12 +169,12 @@ export default function Courses() {
               />
             ) : (
               <>
-                <div className="mb-6 flex items-center justify-between">
-                  <p className="text-sm text-gray-600 font-medium">
+                <div className="mb-8">
+                  <p className="text-lg text-gray-600 font-semibold" aria-live="polite">
                     {courses.length} course{courses.length !== 1 ? 's' : ''} found
                   </p>
                 </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="content-grid grid md:grid-cols-2 lg:grid-cols-3">
                   {courses.map((course, i) => (
                     <motion.div
                       key={course.id}
